@@ -91,7 +91,7 @@
                          longitude: $scope.position.coords.longitude
                      }
                 };
-                 if ($scope.endtime - $scope.starttime < 360000) {
+                 if (($scope.endtime.getTime() - $scope.starttime.getTime()) < 360000) {
                     window.alert("Observation too short");
                  } else {
                      $scope.loading = true;
