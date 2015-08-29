@@ -312,6 +312,46 @@ app.post("/watchbat/api", function(req,res) {
     res.sendStatus(200);
 });
 
+app.get("/watchbat/highscore", function(req.res) {
+    var params = {
+        Bucket: 'wildisrael', /* required */
+        EncodingType: 'url',
+        Prefix: ''
+    };
+    s3.listObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else {
+            var count = {};
+            async.each(data.Contents, function(obj, callback) {
+                var params = {
+                    Bucket: 'wildisrael',
+                    Key: obj.Key
+                };
+                s3.getObject(params, function(err, content) {
+                    if (err) {
+                        console.log("ERROR: " + err);
+                    } else {
+                        try {
+                            var occ = JSON.parse(content.Body.toString());
+                            if (occ.action == "session") {
+                                    email = JSON.stringify(occ.observer.data.emails);
+                                    if (typeof count[email] != "undefined") {
+                                        count[email]++;
+                                    } else {
+                                        count[email] = 1;
+                                    }
+                        } catch (e) {
+                            console.log("ERROR: " + e);
+                        }
+                    }
+                    callback();
+                });
+            }, function (err) {
+                res.end(count);
+                console.log("!!!!" + JSON.stringify(count));
+            });
+}
+
 http.createServer(app).listen(port);
 util.puts('Listening on ' + port + '...');
 util.puts('Press Ctrl + C to stop.');
