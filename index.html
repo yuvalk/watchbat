@@ -7,7 +7,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular.min.js"></script>
         <script src="google-plus-signin.js"></script>
         <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css"/> -->
-        <link rel="stylesheet" href="bootstrap-darkly.min.css"></script>
+        <link rel="stylesheet" href="bootstrap-darkly.min.css">
+        <link rel="stylesheet" href="watchbat-additions.css">
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -158,13 +159,11 @@
             <button class="btn btn-primary btn-lg" type="button" ng-show="!observing && is_auth" ng-click="start()" ng-disable="loading">Start Observing</button>
             <div ng-show="observing">
               <div>Name: {{display_name}}</div>
-              <div>
-                <button class="btn btn-primary" type="button" ng-click="heard()" ng-disabled="loading">I heard a bat!</button>
-                <button class="btn btn-danger" type="button" ng-click="removeLast()" ng-disabled="loading">Remove last</button>
+              <div class="dbtm">
+                <button class="btn btn-lg btn-primary" type="button" ng-click="heard()" ng-disabled="loading">I heard a bat!</button><button class="btn btn-sm btn-danger dbtm" type="button" ng-click="removeLast()" ng-disabled="loading">Remove last</button>
               </div>
               <div>
-                  <label for="count">Count: </label>
-                  <input id="count" class="form-control" name="count" type="number" maxlength="2" ng-model="count"/>
+                  <input id="count" class="form-control input-xl" name="count" type="number" maxlength="2" ng-model="count"/>
               </div>
               <div>
                 <button class="btn btn-primary" type="submit" ng-click="done()" ng-disabled="loading" >Done observing </button>
