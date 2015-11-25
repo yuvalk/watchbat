@@ -163,7 +163,7 @@
                 <button class="btn btn-lg btn-primary" type="button" ng-click="heard()" ng-disabled="loading">I heard a bat!</button><button class="btn btn-sm btn-danger dbtm" type="button" ng-click="removeLast()" ng-disabled="loading">Remove last</button>
               </div>
               <div>
-                  <input id="count" class="form-control input-xl" name="count" type="number" maxlength="2" ng-model="count"/>
+                  <input id="count" class="form-control input-xl" name="count" type="number" min="0" max="99999999" ng-model="count"/>
               </div>
               <div>
                 <button class="btn btn-primary" type="submit" ng-click="done()" ng-disabled="loading" >Done observing </button>
