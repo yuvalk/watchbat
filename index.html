@@ -41,15 +41,15 @@
                 $scope.$apply();
         console.log(resp);
     }
-             
+
              var watchID = navigator.geolocation.watchPosition(function(position) {
                  $scope.position = position;
              });
-             
+
              navigator.geolocation.getCurrentPosition(function (position) {
                  $scope.position = position;
              });
-             
+
              $scope.occurrences = [];
              $scope.is_auth = false;
 
@@ -95,14 +95,14 @@
                     window.alert("Observation too short");
                  } else {
                      $scope.loading = true;
-                     $http.post('/watchbat/api', { 
-                         observer: $scope.user, 
+                     $http.post('/watchbat/api', {
+                         observer: $scope.user,
                          start_time: $scope.starttime,
                          start_location: $scope.startlocation,
                          end_time: $scope.endtime,
                          end_location: $scope.endlocation,
-                         count: $scope.count || $scope.occurrences.length, 
-                         occurrences: $scope.occurrences 
+                         count: $scope.count || $scope.occurrences.length,
+                         occurrences: $scope.occurrences
                      })
                          .success(function() {
                              $scope.loading = false;
@@ -110,7 +110,7 @@
                              window.alert("Done!");
                          })
                          .error(function() {
-                            $scope.loading = false; 
+                            $scope.loading = false;
                              window.alert("Error submitting data...try again?");
                          });
                  }
@@ -120,9 +120,10 @@
         <style>
           body {
           background-color: black;
-          background-image: url('bat.png');
+          background-image: url('background.jpg');
           background-repeat: no-repeat;
-          background-size: cover;
+          background-size: auto;
+          background-position: center;
           }
           .form-group .btn, .form-group label, .form-group input {
           margin-right: 5px;
@@ -150,7 +151,7 @@
     <meta name="theme-color" content="#ffffff">
 
         <div class="row">
-        <h1>WatchBat!</h1>
+        <Center><h1><img alt="WatchBat!" src="watchbat.png" /></h1>
         <form class="form form-inline">
             <google-plus-signin clientid="235328425949-cah1bprfs2m3th0c06fogd3rrboos1s2.apps.googleusercontent.com" ng-show="!is_auth"></google-plus-signin>
           <div class="form-group">
@@ -192,11 +193,12 @@
                 </tr>
             </tbody>
         </table>
-        </div>        
+        </div>
+        <center>
         <div>
             <div>
-            <label>מדריך למשתמש: </label>
-            <a href="http://www.wildisrael.com/?q=content%2F%D7%90%D7%99%D7%9A-%D7%A0%D7%A4%D7%A2%D7%A0%D7%97-%D7%90%D7%AA-%D7%AA%D7%A2%D7%9C%D7%95%D7%9E%D7%AA-%D7%94%D7%90%D7%A9%D7%A4%D7%99%D7%9D" target="_blank">מדריך</a>
+            <label>User Guide: </label>
+            <a href="http://www.wildisrael.com/?q=content%2F%D7%90%D7%99%D7%9A-%D7%A0%D7%A4%D7%A2%D7%A0%D7%97-%D7%90%D7%AA-%D7%AA%D7%A2%D7%9C%D7%95%D7%9E%D7%AA-%D7%94%D7%90%D7%A9%D7%A4%D7%99%D7%9D" target="_blank">מדריך למשתמש</a>
             <a href="http://www.wildisrael.com/?q=content/%D8%A5%D9%84%D9%89-%D8%A3%D9%8A%D9%86-%D8%AA%D8%B0%D9%87%D8%A8-%D8%A7%D9%84%D8%AE%D9%81%D8%A7%D9%81%D9%8A%D8%B4-%D8%B7%D9%84%D9%8A%D9%82%D8%A9-%D8%A7%D9%84%D8%B0%D9%86%D8%A8-%D8%A7%D9%84%D8%A3%D9%88%D8%B1%D9%88%D8%A8%D9%8A%D8%A9%D8%9F" target="_blank">دليل المستخدم</a>
             </div>
             <label>איך נשמע אשף: </label>
@@ -205,5 +207,6 @@
                 <source src="guide/tadarida.mp3" type="audio/mpeg">
             </audio>
         </div>
+      </center>
     </body>
 </html>
