@@ -1,0 +1,11 @@
+@input-height-xlarge:             (ceil(@font-size-large * @line-height-large) + (@padding-large-vertical * 2) + 20);
+.dbtm {
+    display: inline-block;
+    vertical-align: bottom;
+    float: none;
+}
+.input-xl {
+  font-size: 36px;
+  height: auto;
+  text-align: center;
+}
