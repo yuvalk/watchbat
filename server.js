@@ -8,6 +8,7 @@ var util = require('util'),
     serveStatic = require('serve-static')
     port = 1337;
 
+AWS.config.update({region: 'us-west-2'});
 var s3 = new AWS.S3();
 var app = express();
 app.use(serveStatic(__dirname));
@@ -48,7 +49,7 @@ var taxiData = [
 */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 
     var params = {
-        Bucket: 'wildisrael', /* required */
+        Bucket: 'watchbat', /* required */
         EncodingType: 'url',
         Prefix: ''
     };
@@ -60,7 +61,7 @@ var taxiData = [
             //data.Contents.forEach( function (obj) {
 
                 var params = {
-                    Bucket: 'wildisrael',
+                    Bucket: 'watchbat',
                     Key: obj.Key
                 };
                 s3.getObject(params, function(err, content) {
@@ -196,7 +197,7 @@ var taxiData = [
 */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 
     var params = {
-        Bucket: 'wildisrael', /* required */
+        Bucket: 'watchbat', /* required */
         EncodingType: 'url',
         Prefix: ''
     };
@@ -208,7 +209,7 @@ var taxiData = [
             //data.Contents.forEach( function (obj) {
 
                 var params = {
-                    Bucket: 'wildisrael',
+                    Bucket: 'watchbat',
                     Key: obj.Key
                 };
                 s3.getObject(params, function(err, content) {
@@ -305,6 +306,9 @@ google.maps.event.addDomListener(window, 'load', initialize);
     });
 
 });
+app.post("/watchbat/api/login", function(req,res) {
+	console.log("login: " + JSON.stringify(req.body));
+});
 app.post("/watchbat/api", function(req,res) {
     var facts=observation2facts(req.body);
     console.log(JSON.stringify(facts));
@@ -312,49 +316,11 @@ app.post("/watchbat/api", function(req,res) {
     res.sendStatus(200);
 });
 
-app.get("/watchbat/highscore", function(req.res) {
-    var params = {
-        Bucket: 'wildisrael', /* required */
-        EncodingType: 'url',
-        Prefix: ''
-    };
-    s3.listObjects(params, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else {
-            var count = {};
-            async.each(data.Contents, function(obj, callback) {
-                var params = {
-                    Bucket: 'wildisrael',
-                    Key: obj.Key
-                };
-                s3.getObject(params, function(err, content) {
-                    if (err) {
-                        console.log("ERROR: " + err);
-                    } else {
-                        try {
-                            var occ = JSON.parse(content.Body.toString());
-                            if (occ.action == "session") {
-                                    email = JSON.stringify(occ.observer.data.emails);
-                                    if (typeof count[email] != "undefined") {
-                                        count[email]++;
-                                    } else {
-                                        count[email] = 1;
-                                    }
-                        } catch (e) {
-                            console.log("ERROR: " + e);
-                        }
-                    }
-                    callback();
-                });
-            }, function (err) {
-                res.end(count);
-                console.log("!!!!" + JSON.stringify(count));
-            });
-}
 
 http.createServer(app).listen(port);
 util.puts('Listening on ' + port + '...');
 util.puts('Press Ctrl + C to stop.');
+console.log(JSON.stringify(s3));
 
 function observation2facts(obs) {
     var facts = [];
@@ -375,10 +341,10 @@ function writeS3Facts(facts) {
     facts.forEach( function (fact) {
         var date = new Date(fact.time);
         var key = "watchbat/" + date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate() + "/" + (date.getHours() + 1) + "/" + fact.id;
-        var params = {Bucket: 'wildisrael', Key: key, Body: JSON.stringify(fact)};
+        var params = {Bucket: 'watchbat', Key: key, Body: JSON.stringify(fact)};
         s3.putObject(params, function(err, data) {
         if (err)       
-            console.log(err)     
+            console.log(JSON.stringify(s3) + " ! " + err)     
         else
             console.log("Successfully uploaded data to myBucket/myKey");   
         });
