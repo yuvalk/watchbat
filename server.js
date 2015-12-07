@@ -38,7 +38,7 @@ var html = (function () {/*
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Circles</title>
+    <title>Watchbat Coverage Map</title>
     <style>
       html, body {
         height: 100%;
@@ -48,14 +48,40 @@ var html = (function () {/*
       #map {
         height: 100%;
       }
+	.map-container {
+	    position: relative;
+	}
+
+	.nav3 {
+	    width: 100px;
+	    height: auto;
+	    position: absolute;
+	    bottom: 0;
+	    left: 0;
+	}
+	img {
+		width: 100px;
+	}
     </style>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23162099-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
   </head>
   <body>
     <div id="map"></div>
+    <div class="nav3">
+        <a href="http://www.xkd-technologies.com"><img src="/XKD Logo.png" /></a>
+        <a href="http://www.wildisrael.com"><img src="/wildisrael.jpg" /></a>
+    </div>
     <script>
-
-// This example creates circles on the map, representing populations in North
-// America.
 
 // First, create an object containing LatLng and population for each city.
 var sessionsmap = {
@@ -85,12 +111,22 @@ var sessionsmap = {
                             var occ = JSON.parse(content.Body.toString());
                             if (occ.action == "session" && occ.location) {
 				occ.id = occ.id.replace(/\-/g,'');
-				var newloc = occ.id + ": { center: { lat: " + occ.location.start.location.latitude + ", lng: " + occ.location.start.location.longitude + "}, mag: 1 }, ";
-                                console.log(newloc);
+				var now=new Date().getTime();
+				var zerodistance=15768000000*2; //half year
+				var calcdistance = now - Date.parse(occ.time);
+				var min_distance = 0.1;
+				var max_distance = 0.8;
+				var distance = (zerodistance - calcdistance)/zerodistance;
+				if (distance < min_distance) {
+					distance = min_distance;
+				}
+				if (distance > max_distance) {
+					distance = max_distance;
+				}
+				var newloc = occ.id + ": { center: { lat: " + occ.location.start.location.latitude + ", lng: " + occ.location.start.location.longitude + "}, mag: 1, distance: " + distance + " }, ";
                                 html += newloc;
-				var newloc = occ.id + ": { center: { lat: " + occ.location.end.location.latitude + ", lng: " + occ.location.end.location.longitude + "}, mag: 1 }, ";
-                                console.log(newloc);
-                                html += newloc;
+				var newloc = occ.id + ": { center: { lat: " + occ.location.end.location.latitude + ", lng: " + occ.location.end.location.longitude + "}, mag: 1, distance: " + distance + " }, ";
+//                                html += newloc;
                             }
                         } catch (e) {
                             console.log("ERROR: " + e);
@@ -107,7 +143,7 @@ function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 9,
     center: new google.maps.LatLng(31.631893,34.6761535),
-    mapTypeId: google.maps.MapTypeId.SATELLITE
+    mapTypeId: google.maps.MapTypeId.HYBRID
   });
 
   // Construct the circle for each value in citymap.
@@ -115,11 +151,11 @@ function initMap() {
   for (var sess in sessionsmap) {
     // Add the circle for this city to the map.
     var sessCircle = new google.maps.Circle({
-      strokeColor: '#FF0000',
-      strokeOpacity: 0.8,
+      strokeColor: '#0000FF',
+      strokeOpacity: 0.0,
       strokeWeight: 2,
-      fillColor: '#FF0000',
-      fillOpacity: 0.35,
+      fillColor: '#0000FF',
+      fillOpacity: sessionsmap[sess].distance, //0.35,
       map: map,
       center: sessionsmap[sess].center,
       radius: Math.sqrt(sessionsmap[sess].mag) * 1000
@@ -134,6 +170,7 @@ function initMap() {
 </html>
 */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 
+    fs.writeFile('cover.html', html, function (err) {console.log("ERROR: colud not write cover.html: " + err);});
     res.end(html);
             });
         }
