@@ -28,6 +28,19 @@ app.get("/watchbat/737638bc-312c-495c-a5e4-113b90432ad4/logins", function(req,re
 	});
 });
 
+app.get("/watchbat/5d07b7e9-ab39-4842-a562-08df4a4faebc/actions", function(req,res) {
+	fs.readFile('actions.log', function(error, content) {
+		if (error) {
+			res.writeHead(500);
+			res.end();
+		}
+		else {
+			res.writeHead(200, { 'Content-Type': 'text/plain' });
+			res.end(content, 'utf-8');
+		}
+	});
+});
+
 app.get("/watchbat/covermap", function(req,res) {
     console.log("!!!!");
     res.writeHead(200, {"Content-Type": "text/html"});
@@ -177,13 +190,19 @@ function initMap() {
     });
 
 });
-app.post("/watchbat/api/login", function(req,res) {
-	console.log("login: " + JSON.stringify(req.body));
-	if (req.body.observer("eyalvanunu@gmail.com") > -1) {
+
+app.post("/watchbat/api/action_logger", function(req,res) {
+    time = req.body.time;
+    user = req.body.observer;
+    action = req.body.action;
+
+	console.log("action_logger " + time + "action: " + action + " user: " + user.displayName);
+    fs.appendFile('actions.log', '\n' + time + ' ' + user.displayName + ' ' + action + ' ' + JSON.stringify(user));
+	if (JSON.stringify(req.body.observer).indexOf("eyalvanunu@gmail.com") > -1) {
 		// User is Eyal, not interesting
 	} else {
 		// not eyal
-        fs.appendFile('logins.txt', '\n' + req.body.logintime + ' ' + req.body.observer.displayName + ' emails:' + JSON.stringify(req.body.observer.emails), function (err) {});
+        fs.appendFile('logins.txt', '\n' + time + ' ' + req.body.observer.displayName + ' emails:' + JSON.stringify(req.body.observer.emails), function (err) {});
 	}
 });
 app.get("/watchbat/heatmap", function(req,res) {

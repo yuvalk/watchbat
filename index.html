@@ -35,15 +35,19 @@
         gapi.client.plus.people.get({userId: 'me'}).execute(handleResponse);
     }
 
+    function log_action(action) {
+        $scope.lastactiontime = new Date();
+        $http.post('/watchbat/api/action_logger', {
+            action: action,
+            time: $scope.lastactiontime,
+            observer: $scope.user
+        }).then(function(res){});
+    }
+        
+
     function handleResponse(resp) {
                 $scope.user = resp;
-             $scope.logintime = new Date();
-             $http.post('/watchbat/api/login', {
-                 logintime: $scope.logintime,
-                 observer: $scope.user
-             }).success(function() {
-             }).error(function() {
-             });
+                log_action("login");
                 $scope.display_name = resp.displayName;
                 $scope.is_auth = true;
                 $scope.$apply();
@@ -63,6 +67,7 @@
 
              $scope.heard = function() {
                  $scope.count += 1;
+                log_action("heard bat, total=" + $scope.count + " location: lat=" + $scope.position.coords.latitude + " lon=" + $scope.position.coords.longitude);
                  $scope.occurrences.push({
                      time:new Date(),
                      location: {
@@ -72,9 +77,11 @@
                  });
              };
              $scope.cancel = function() {
+                log_action("cancel");
                  $scope.observing = false;
              };
              $scope.start = function() {
+                log_action("start");
                  $scope.observing = true;
                  $scope.count = 0;
                  $scope.starttime = new Date();
@@ -89,6 +96,7 @@
              $scope.removeLast = function() {
                  $scope.occurrences.pop();
                  $scope.count = Math.max(0, $scope.count - 1);
+                log_action("remove bat, total=" + $scope.count);
              };
              $scope.count = 0;
              $scope.done = function() {
@@ -99,6 +107,8 @@
                          longitude: $scope.position.coords.longitude
                      }
                 };
+                $scope.duration = $scope.endtime.getTime() - $scope.starttime.getTime();
+                log_action("done, total=" + $scope.count + " duration=" + $scope.duration);
                  if (($scope.endtime.getTime() - $scope.starttime.getTime()) < 360000) {
                     window.alert("Observation too short");
                  } else {
