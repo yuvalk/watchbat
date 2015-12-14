@@ -109,8 +109,9 @@
                 };
                 $scope.duration = $scope.endtime.getTime() - $scope.starttime.getTime();
                 log_action("done, total=" + $scope.count + " duration=" + $scope.duration);
-                 if (($scope.endtime.getTime() - $scope.starttime.getTime()) < 360000) {
-                    window.alert("Observation too short");
+                 if (($scope.endtime.getTime() - $scope.starttime.getTime()) < 180000) {
+                    more_minutes = (180000 - $scope.duration)/60000.0;
+                    window.alert("Observation too short, please keep listening for another: " + more_minutes.toFixed(2) + " more minutes");
                  } else {
                      $scope.loading = true;
                      $http.post('/watchbat/api', {
